@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 
 
 public class TestJSONParser {
+	
+	public static final String PINTEREST_URL = "http://pinterest.com";
 	/*
 	{
 		"body": [
@@ -29,18 +31,18 @@ public class TestJSONParser {
 	}**/
 	
 	/*
-	 * Class of items inside body
+	 * Class of items (pinterest board) inside body
 	 */
 	static class Item {
-		String name;
-		String href;
-		String src;
+		String name; //name of the board
+		String href; //url to the board
+		String src; 
 	}
 	/*
 	 * Class of meta inside body
 	 */
 	static class Meta {
-		String count;
+		String count; //number of boards
 	}
     
 	/*
@@ -57,8 +59,12 @@ public class TestJSONParser {
 			json = readUrl("http://pinterestapi.co.uk/jwmoz/boards");
 			Gson gson = new Gson();        
 			Page page = gson.fromJson(json, Page.class);
-			for (Item item : page.body)
-				System.out.println(item.name);
+			
+			for (Item board : page.body) {
+				//Board URL
+				String board_url = PINTEREST_URL + board.href;
+			}
+				
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -14,19 +14,32 @@ import org.htmlcleaner.XPatherException;
 
 public class TestHMLParser {
 	static Logger logger = Logger.getLogger(TestHMLParser.class.getName());
-	public static void main (String[] args) {
-		CleanerProperties props = new CleanerProperties();
-		 
+	static CleanerProperties props = new CleanerProperties();
+	
+	public TestHMLParser() {
 		// set some properties to non-default values
 		props.setTranslateSpecialEntities(true);
 		props.setTransResCharsToNCR(true);
 		props.setOmitComments(true);
-		
+	}
+	
+	
+	public static void main (String[] args) {
+		 TestHMLParser.processBoardPage("http://www.pinterest.com/jwmoz/take-me-there/");
+	}
+    
+	/**
+	 * Get data from pin pages
+	 * @param pinurl
+	 */
+	public static void processPinPage(String pinurl) {
 		// do parsing
 		try {
+			//e.g., http://pinterest.com/pin/116319602848921944/
 			TagNode node = new HtmlCleaner(props).clean(
-			    new URL("http://pinterest.com/pin/116319602848921944/")
+			    new URL(pinurl)
 			);
+			
 			Object[] cmtList = node.evaluateXPath("//div[@class='commenterNameCommentText']");
 			if(cmtList == null || cmtList.length < 1) {
 			    return;
@@ -51,7 +64,45 @@ public class TestHMLParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		 
 	}
+	
+	/**
+	 * 
+	 * @param boardurl
+	 */
+	public static void processBoardPage(String boardurl) {
+		try {
+			//e.g., http://www.pinterest.com/jwmoz/take-me-there/
+			TagNode node = new HtmlCleaner(props).clean(
+				    new URL(boardurl)
+				);
 
+			Object[] pinList = node.evaluateXPath("//div[@class='pinHolder']");	
+			if(pinList == null || pinList.length < 1) {
+			    return;
+			}
+			for (Object pinWrapper : pinList) {
+				TagNode pinWrapperNode = (TagNode) pinWrapper;
+				Object[] img = pinWrapperNode.evaluateXPath("//img");
+				//assume only one pin inside the node
+				String imgsrc = ((TagNode)img[0]).getAttributeByName("src");
+				Object[] pin = pinWrapperNode.evaluateXPath("/a[@class='pinImageWrapper']");
+				//assume only one pin inside the node
+				String pinurl = ((TagNode)pin[0]).getAttributeByName("href");
+				
+				System.out.println(imgsrc);
+				System.out.println(pinurl);
+				
+			}
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XPatherException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
