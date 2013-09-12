@@ -6,5 +6,5 @@ MS1: incremental crawling
       - multimedia object metadata 
       - social linkages
 ========
-Authors: Claudia at l3s
+Authors: Claudia at l3s,
          Tu      at l3s 
